@@ -34,3 +34,12 @@ type UserResponse struct {
 	Email    string `json:"email"`
 	Username uint   `json:"username"`
 }
+
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password uint   `json:"password" validate:"required,min:6"`
+}
+
+type LoginResponse struct {
+	Token string `json:"token"`
+}
