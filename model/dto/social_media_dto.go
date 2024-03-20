@@ -32,9 +32,9 @@ type UpdateSocialMediaRequest struct {
 }
 
 type UpdateSocialMediaResponse struct {
-	Id             uint         `json:"id"`
-	Name           string       `json:"name"`
-	SocialMediaUrl string       `json:"social_media_url"`
-	User           UserResponse `json:"user"`
-	UpdatedAt      time.Time    `json:"updated_at"`
+	Id             uint      `json:"id"`
+	Name           string    `json:"name"`
+	SocialMediaUrl string    `json:"social_media_url"`
+	UserId         uint      `json:"user_id"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }

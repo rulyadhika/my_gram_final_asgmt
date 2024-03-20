@@ -7,6 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
+	"github.com/rulyadhika/my_gram_final_asgmt/pkg/helper"
 	"github.com/rulyadhika/my_gram_final_asgmt/repository"
 )
 
@@ -25,7 +26,13 @@ func NewSocialMediaServiceImpl(socialMediaRepository repository.SocialMediaRepos
 }
 
 func (s *SocialMediaServiceImpl) FindAll(ctx *gin.Context) (*[]dto.SocialMediaResponse, error) {
-	panic("not implemented") // TODO: Implement
+	result, err := s.SocialMediaRepository.FindAll(ctx, s.DB)
+
+	if err != nil {
+		return &[]dto.SocialMediaResponse{}, err
+	}
+
+	return helper.ToSocialMediasResponse(result), nil
 }
 
 func (s *SocialMediaServiceImpl) Create(ctx *gin.Context, socialMediaDto *dto.NewSocialMediaRequest) (*dto.NewSocialMediaResponse, error) {
@@ -47,13 +54,41 @@ func (s *SocialMediaServiceImpl) Create(ctx *gin.Context, socialMediaDto *dto.Ne
 		return &dto.NewSocialMediaResponse{}, err
 	}
 
-	return result.ToNewSocialMediaResponse(), nil
+	return helper.ToNewSocialMediaResponse(result), nil
 }
 
 func (s *SocialMediaServiceImpl) Update(ctx *gin.Context, socialMediaDto *dto.UpdateSocialMediaRequest) (*dto.UpdateSocialMediaResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := s.Validate.Struct(socialMediaDto)
+
+	if validationErr != nil {
+		return &dto.UpdateSocialMediaResponse{}, validationErr
+	}
+
+	// TODO change user id get from context
+	userId := 1
+
+	socialMedia := entity.SocialMedia{
+		Id:             socialMediaDto.Id,
+		Name:           socialMediaDto.Name,
+		SocialMediaUrl: socialMediaDto.SocialMediaUrl,
+		UserId:         uint(userId),
+	}
+
+	result, err := s.SocialMediaRepository.Update(ctx, s.DB, socialMedia)
+
+	if err != nil {
+		return &dto.UpdateSocialMediaResponse{}, err
+	}
+
+	return helper.ToUpdateSocialMediaResponse(result), nil
 }
 
 func (s *SocialMediaServiceImpl) Delete(ctx *gin.Context, socialMediaId int) error {
-	panic("not implemented") // TODO: Implement
+	err := s.SocialMediaRepository.Delete(ctx, s.DB, socialMediaId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

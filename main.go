@@ -21,7 +21,9 @@ func main() {
 	socialMediaService := service.NewSocialMediaServiceImpl(socialMediaRepository, db, validate)
 	socialMediaHandler := handler.NewSocialMediaHandlerImpl(socialMediaService)
 
+	// routes
 	app.SocialMediaRoutes(router, socialMediaHandler)
+	// end of routes
 
 	router.Run(":" + appConfig.SERVER_PORT)
 }

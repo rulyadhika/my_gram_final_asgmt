@@ -6,8 +6,11 @@ import (
 )
 
 func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler) {
-	socialMediaRoute := r.Group("/social-medias")
+	socialMediaRoute := r.Group("/socialmedias")
 	{
+		socialMediaRoute.GET("/", handler.FindAll)
 		socialMediaRoute.POST("/", handler.Create)
+		socialMediaRoute.PUT("/:socialMediaId", handler.Update)
+		socialMediaRoute.DELETE("/:socialMediaId", handler.Delete)
 	}
 }
