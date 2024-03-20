@@ -30,9 +30,9 @@ type UpdateUserResponse struct {
 }
 
 type UserResponse struct {
-	Id       string `json:"id"`
+	Id       uint   `json:"id"`
 	Email    string `json:"email"`
-	Username uint   `json:"username"`
+	Username string `json:"username"`
 }
 
 type LoginRequest struct {
