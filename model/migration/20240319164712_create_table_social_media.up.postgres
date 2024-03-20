@@ -1,0 +1,13 @@
+CREATE TABLE social_medias
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    social_media_url VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+    CONSTRAINT social_media_user_id_fk
+    FOREIGN KEY(user_id)
+        REFERENCES users(id)
+            ON DELETE CASCADE
+);

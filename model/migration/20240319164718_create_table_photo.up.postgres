@@ -1,0 +1,14 @@
+CREATE TABLE photos
+(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    caption TEXT NOT NULL,
+    photo_url VARCHAR(255) NOT NULL,
+    user_id INT,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
+    CONSTRAINT photo_user_id_fk
+    FOREIGN KEY(user_id)
+        REFERENCES users(id)
+            ON DELETE CASCADE
+);

@@ -1,0 +1,6 @@
+start:
+	go run main.go
+migrate-up:
+	migrate -database "postgres://<username>:<password>@<host>:<port>/<database-name>?sslmode=disable" -path model/migration up
+migrate-down:
+	migrate -database "postgres://<username>:<password>@<host>:<port>/<database-name>?sslmode=disable" -path model/migration down
