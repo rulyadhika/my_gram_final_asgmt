@@ -1,6 +1,6 @@
 package dto
 
-type CommonDto struct {
+type WebResponse struct {
 	Status  string `json:"status"`
 	Code    int    `json:"code"`
 	Message string `json:"message"`

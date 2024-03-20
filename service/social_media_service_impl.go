@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
+	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
 	"github.com/rulyadhika/my_gram_final_asgmt/repository"
 )
 
@@ -28,7 +29,25 @@ func (s *SocialMediaServiceImpl) FindAll(ctx *gin.Context) (*[]dto.SocialMediaRe
 }
 
 func (s *SocialMediaServiceImpl) Create(ctx *gin.Context, socialMediaDto *dto.NewSocialMediaRequest) (*dto.NewSocialMediaResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := s.Validate.Struct(socialMediaDto)
+
+	if validationErr != nil {
+		return &dto.NewSocialMediaResponse{}, validationErr
+	}
+
+	socialMediaData := entity.SocialMedia{
+		Name:           socialMediaDto.Name,
+		SocialMediaUrl: socialMediaDto.SocialMediaUrl,
+		UserId:         socialMediaDto.UserId,
+	}
+
+	result, err := s.SocialMediaRepository.Create(ctx, s.DB, socialMediaData)
+
+	if err != nil {
+		return &dto.NewSocialMediaResponse{}, err
+	}
+
+	return result.ToNewSocialMediaResponse(), nil
 }
 
 func (s *SocialMediaServiceImpl) Update(ctx *gin.Context, socialMediaDto *dto.UpdateSocialMediaRequest) (*dto.UpdateSocialMediaResponse, error) {

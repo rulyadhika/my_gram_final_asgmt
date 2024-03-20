@@ -30,7 +30,7 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 }
 
 func handleError(ctx *gin.Context, httpStatusCode int, err error) {
-	webResponse := &dto.CommonDto{
+	webResponse := &dto.WebResponse{
 		Status:  http.StatusText(httpStatusCode),
 		Code:    httpStatusCode,
 		Message: err.Error(),
