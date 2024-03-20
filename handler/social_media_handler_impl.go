@@ -28,6 +28,7 @@ func (s *SocialMediaHandlerImpl) Create(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Error(errs.NewUnprocessableEntityError("invalid json request body"))
+		return
 	}
 
 	// TODO change to dynamic user id
@@ -37,6 +38,7 @@ func (s *SocialMediaHandlerImpl) Create(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.Error(err)
+		return
 	}
 
 	response := &dto.WebResponse{

@@ -19,9 +19,9 @@ func (s *SocialMediaRepositoryImpl) FindAll(ctx *gin.Context, db *sql.DB) ([]ent
 }
 
 func (s *SocialMediaRepositoryImpl) Create(ctx *gin.Context, db *sql.DB, socialMedia entity.SocialMedia) (entity.SocialMedia, error) {
-	sqlQuery := "INSERT INTO social_medias(name, social_media_url, user_id) VALUES($1, $2, $3) RETURNING id"
+	sqlQuery := "INSERT INTO social_medias(name, social_media_url, user_id) VALUES($1, $2, $3) RETURNING id, created_at"
 
-	err := db.QueryRowContext(ctx, sqlQuery, socialMedia.Name, socialMedia.SocialMediaUrl, socialMedia.UserId).Scan(socialMedia.Id)
+	err := db.QueryRowContext(ctx, sqlQuery, socialMedia.Name, socialMedia.SocialMediaUrl, socialMedia.UserId).Scan(&socialMedia.Id, &socialMedia.CreatedAt)
 
 	if err != nil {
 		return socialMedia, errs.NewInternalServerError("something went wrong")
