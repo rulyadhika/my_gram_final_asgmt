@@ -1,5 +1,7 @@
 start:
 	go run main.go
+run-dev:
+	nodemon -e go --signal SIGKILL --exec go run .
 migrate-up:
 	migrate -database "postgres://<username>:<password>@<host>:<port>/<database-name>?sslmode=disable" -path model/migration up
 migrate-down:
