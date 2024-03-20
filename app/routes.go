@@ -14,3 +14,13 @@ func PhotoRoutes(r *gin.Engine, handler handler.PhotoHandler) {
 		photoRoute.DELETE("/:photoId", handler.Delete)
 	}
 }
+
+func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler) {
+	socialMediaRoute := r.Group("/socialmedias")
+	{
+		socialMediaRoute.GET("/", handler.FindAll)
+		socialMediaRoute.POST("/", handler.Create)
+		socialMediaRoute.PUT("/:socialMediaId", handler.Update)
+		socialMediaRoute.DELETE("/:socialMediaId", handler.Delete)
+	}
+}

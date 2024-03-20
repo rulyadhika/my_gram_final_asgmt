@@ -17,11 +17,18 @@ func main() {
 	router := gin.Default()
 	router.Use(middleware.ErrorHandlerMiddleware())
 
+	socialMediaRepository := repository.NewSocialMediaRepositoryImpl()
+	socialMediaService := service.NewSocialMediaServiceImpl(socialMediaRepository, db, validate)
+	socialMediaHandler := handler.NewSocialMediaHandlerImpl(socialMediaService)
+
 	photoRepository := repository.NewPhotoRepositoryImpl()
 	photoService := service.NewPhotoServiceImpl(photoRepository, db, validate)
 	photoHandler := handler.NewPhotoHandlerImpl(photoService)
 
+	// routes
+	app.SocialMediaRoutes(router, socialMediaHandler)
 	app.PhotoRoutes(router, photoHandler)
+	// end of routes
 
 	router.Run(":" + appConfig.SERVER_PORT)
 }
