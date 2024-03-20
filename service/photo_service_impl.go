@@ -26,7 +26,14 @@ func NewPhotoServiceImpl(photoRepository repository.PhotoRepository, db *sql.DB,
 }
 
 func (p *PhotoServiceImpl) FindAll(ctx *gin.Context) (*[]dto.PhotoResponse, error) {
-	panic("not implemented") // TODO: Implement
+	result, err := p.PhotoRepository.FindAll(ctx, p.DB)
+
+	if err != nil {
+		return &[]dto.PhotoResponse{}, err
+	}
+
+	return helper.ToPhotoResponse(result), nil
+
 }
 
 func (p *PhotoServiceImpl) Create(ctx *gin.Context, photoDto *dto.NewPhotoRequest) (*dto.NewPhotoResponse, error) {
@@ -53,9 +60,34 @@ func (p *PhotoServiceImpl) Create(ctx *gin.Context, photoDto *dto.NewPhotoReques
 }
 
 func (p *PhotoServiceImpl) Update(ctx *gin.Context, photoDto *dto.UpdatePhotoRequest) (*dto.UpdatePhotoResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := p.Validate.Struct(photoDto)
+
+	if validationErr != nil {
+		return &dto.UpdatePhotoResponse{}, validationErr
+	}
+
+	photo := entity.Photo{
+		Id:       photoDto.Id,
+		Title:    photoDto.Title,
+		Caption:  photoDto.Caption,
+		PhotoUrl: photoDto.PhotoUrl,
+	}
+
+	result, err := p.PhotoRepository.Update(ctx, p.DB, photo)
+
+	if err != nil {
+		return &dto.UpdatePhotoResponse{}, err
+	}
+
+	return helper.ToPhotoUpdateResponse(result), nil
 }
 
 func (p *PhotoServiceImpl) Delete(ctx *gin.Context, photoId int) error {
-	panic("not implemented") // TODO: Implement
+	err := p.PhotoRepository.Delete(ctx, p.DB, photoId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
