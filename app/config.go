@@ -14,6 +14,7 @@ type AppConfig struct {
 	DB_DATABASE string
 	DB_USERNAME string
 	DB_PASSWORD string
+	SERVER_PORT string
 }
 
 func init() {
@@ -31,5 +32,6 @@ func GetAppConfig() *AppConfig {
 		DB_DATABASE: os.Getenv("DB_DATABASE"),
 		DB_USERNAME: os.Getenv("DB_USERNAME"),
 		DB_PASSWORD: os.Getenv("DB_PASSWORD"),
+		SERVER_PORT: os.Getenv("SERVER_PORT"),
 	}
 }

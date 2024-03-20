@@ -51,7 +51,7 @@ func handleValidationError(ctx *gin.Context, errs validator.ValidationErrors) {
 		errors += fmt.Sprintf("Field validation for '%s' failed on the '%s' tag", err.Field(), err.Tag())
 
 		if index != len(errs)-1 {
-			errors += ","
+			errors += ", "
 		}
 	}
 
