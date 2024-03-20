@@ -64,14 +64,10 @@ func (s *SocialMediaServiceImpl) Update(ctx *gin.Context, socialMediaDto *dto.Up
 		return &dto.UpdateSocialMediaResponse{}, validationErr
 	}
 
-	// TODO change user id get from context
-	userId := 1
-
 	socialMedia := entity.SocialMedia{
 		Id:             socialMediaDto.Id,
 		Name:           socialMediaDto.Name,
 		SocialMediaUrl: socialMediaDto.SocialMediaUrl,
-		UserId:         uint(userId),
 	}
 
 	result, err := s.SocialMediaRepository.Update(ctx, s.DB, socialMedia)

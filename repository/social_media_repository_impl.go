@@ -62,9 +62,9 @@ func (s *SocialMediaRepositoryImpl) Create(ctx *gin.Context, db *sql.DB, socialM
 }
 
 func (s *SocialMediaRepositoryImpl) Update(ctx *gin.Context, db *sql.DB, socialMedia entity.SocialMedia) (entity.SocialMedia, error) {
-	sqlQuery := `UPDATE social_medias SET name=$1, social_media_url=$2, updated_at=$3 WHERE id=$4 RETURNING updated_at`
+	sqlQuery := `UPDATE social_medias SET name=$1, social_media_url=$2, updated_at=$3 WHERE id=$4 RETURNING updated_at, user_id`
 
-	err := db.QueryRowContext(ctx, sqlQuery, socialMedia.Name, socialMedia.SocialMediaUrl, time.Now(), socialMedia.Id).Scan(&socialMedia.UpdatedAt)
+	err := db.QueryRowContext(ctx, sqlQuery, socialMedia.Name, socialMedia.SocialMediaUrl, time.Now(), socialMedia.Id).Scan(&socialMedia.UpdatedAt, &socialMedia.UserId)
 
 	if err != nil {
 		log.Printf("[UpdateSocialMedia - Repo] err: %s \n", err.Error())
