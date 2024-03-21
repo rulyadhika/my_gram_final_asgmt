@@ -1,12 +1,15 @@
 package dto
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type NewUserRequest struct {
-	Username string `json:"username" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min:6"`
-	Age      uint   `json:"age" validate:"required,min:8"`
+	Username string      `json:"username" validate:"required"`
+	Email    string      `json:"email" validate:"required,email"`
+	Password string      `json:"password" validate:"required"`
+	Age      json.Number `json:"age" validate:"required,number"`
 }
 
 type NewUserResponse struct {

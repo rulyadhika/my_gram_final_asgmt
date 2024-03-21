@@ -35,10 +35,17 @@ func main() {
 	commentHandler := handler.NewCommentHandlerImpl(commentService)
 	// comment
 
+	// user
+	userRepository := repository.NewUserRepositoryImpl()
+	userService := service.NewUserServiceImpl(userRepository, db, validate)
+	userHandler := handler.NewUserHandlerImpl(userService)
+	// user
+
 	// routes
 	app.SocialMediaRoutes(router, socialMediaHandler)
 	app.PhotoRoutes(router, photoHandler)
 	app.CommentRoutes(router, commentHandler)
+	app.UserRoutes(router, userHandler)
 	// end of routes
 
 	router.Run(":" + appConfig.SERVER_PORT)

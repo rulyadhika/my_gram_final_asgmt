@@ -6,6 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
+	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
+	"github.com/rulyadhika/my_gram_final_asgmt/pkg/errs"
+	"github.com/rulyadhika/my_gram_final_asgmt/pkg/helper"
 	"github.com/rulyadhika/my_gram_final_asgmt/repository"
 )
 
@@ -24,7 +27,45 @@ func NewUserServiceImpl(userRepository repository.UserRepository, db *sql.DB, va
 }
 
 func (u *UserServiceImpl) Register(ctx *gin.Context, userDto *dto.NewUserRequest) (*dto.NewUserResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := u.Validate.Struct(userDto)
+
+	if validationErr != nil {
+		return &dto.NewUserResponse{}, validationErr
+	}
+
+	age, err := userDto.Age.Float64()
+
+	if err != nil {
+		return &dto.NewUserResponse{}, errs.NewUnprocessableEntityError("age must be a number")
+	}
+
+	user := entity.User{
+		Username: userDto.Username,
+		Email:    userDto.Email,
+		Age:      uint(age),
+		Password: userDto.Password,
+	}
+
+	// check email and username should be unique
+	err = u.UserRepository.CheckEmailAndUsernameUnique(ctx, u.DB, user)
+
+	if err != nil {
+		return &dto.NewUserResponse{}, err
+	}
+
+	// hash password
+	err = user.HashPassword()
+	if err != nil {
+		return &dto.NewUserResponse{}, err
+	}
+
+	result, err := u.UserRepository.Register(ctx, u.DB, user)
+
+	if err != nil {
+		return &dto.NewUserResponse{}, err
+	}
+
+	return helper.ToNewUserResponse(result), nil
 }
 
 func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*dto.LoginResponse, error) {
