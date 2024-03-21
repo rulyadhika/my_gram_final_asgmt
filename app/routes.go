@@ -24,3 +24,13 @@ func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler) {
 		socialMediaRoute.DELETE("/:socialMediaId", handler.Delete)
 	}
 }
+
+func CommentRoutes(r *gin.Engine, handler handler.CommentHandler) {
+	commentRoute := r.Group("/comments")
+	{
+		commentRoute.GET("/", handler.FindAll)
+		commentRoute.POST("/", handler.Create)
+		commentRoute.PUT("/:commentId", handler.Update)
+		commentRoute.DELETE("/:commentId", handler.Delete)
+	}
+}

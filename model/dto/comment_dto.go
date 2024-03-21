@@ -1,11 +1,14 @@
 package dto
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type NewCommentRequest struct {
-	UserId  uint   `json:"user_id" validate:"required"`
-	PhotoId uint   `json:"photo_id" validate:"required"`
-	Message string `json:"message" validate:"required"`
+	UserId  uint        `json:"user_id" validate:"required"`
+	PhotoId json.Number `json:"photo_id" validate:"required"`
+	Message string      `json:"message" validate:"required"`
 }
 
 type NewCommentResponse struct {
@@ -32,7 +35,6 @@ type UpdateCommentResponse struct {
 type CommentResponse struct {
 	Id        uint          `json:"id"`
 	Message   string        `json:"message"`
-	PhotoId   uint          `json:"photo_id"`
 	CreatedAt time.Time     `json:"created_at"`
 	UpdatedAt time.Time     `json:"updated_at"`
 	User      UserResponse  `json:"user"`
