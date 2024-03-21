@@ -98,3 +98,64 @@ func ToUpdateSocialMediaResponse(s entity.SocialMedia) *dto.UpdateSocialMediaRes
 		UpdatedAt:      s.UpdatedAt,
 	}
 }
+
+func ToNewCommentResponse(c entity.Comment) *dto.NewCommentResponse {
+	return &dto.NewCommentResponse{
+		Id:        c.Id,
+		Message:   c.Message,
+		PhotoId:   c.PhotoId,
+		UserId:    c.UserId,
+		CreatedAt: c.CreatedAt,
+	}
+}
+
+func ToCommentsResponse(c []repository.CommentPhotoUser) *[]dto.CommentResponse {
+	comments := []dto.CommentResponse{}
+
+	for _, item := range c {
+		userComment := dto.UserResponse{
+			Id:       item.User.Id,
+			Email:    item.Email,
+			Username: item.Username,
+		}
+
+		userPhoto := dto.UserResponse{
+			Id:       item.PhotoUser.User.Id,
+			Email:    item.PhotoUser.User.Email,
+			Username: item.PhotoUser.User.Username,
+		}
+
+		photo := dto.PhotoResponse{
+			Id:        item.PhotoUser.Photo.Id,
+			Title:     item.PhotoUser.Photo.Title,
+			Caption:   item.PhotoUser.Photo.Caption,
+			PhotoUrl:  item.PhotoUser.Photo.PhotoUrl,
+			CreatedAt: item.PhotoUser.Photo.CreatedAt,
+			UpdatedAt: item.PhotoUser.Photo.UpdatedAt,
+			User:      userPhoto,
+		}
+
+		comment := dto.CommentResponse{
+			Id:        item.Comment.Id,
+			Message:   item.Message,
+			CreatedAt: item.Comment.CreatedAt,
+			UpdatedAt: item.Comment.UpdatedAt,
+			User:      userComment,
+			Photo:     photo,
+		}
+
+		comments = append(comments, comment)
+	}
+
+	return &comments
+}
+
+func ToUpdateCommentResponse(c entity.Comment) *dto.UpdateCommentResponse {
+	return &dto.UpdateCommentResponse{
+		Id:        c.Id,
+		Message:   c.Message,
+		PhotoId:   c.PhotoId,
+		UserId:    c.UserId,
+		UpdatedAt: c.UpdatedAt,
+	}
+}
