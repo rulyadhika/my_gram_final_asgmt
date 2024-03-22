@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/rulyadhika/my_gram_final_asgmt/app"
+	"github.com/rulyadhika/my_gram_final_asgmt/app/config"
+	"github.com/rulyadhika/my_gram_final_asgmt/app/database"
+	"github.com/rulyadhika/my_gram_final_asgmt/app/routes"
 	"github.com/rulyadhika/my_gram_final_asgmt/handler"
 	"github.com/rulyadhika/my_gram_final_asgmt/middleware"
 	"github.com/rulyadhika/my_gram_final_asgmt/repository"
@@ -11,8 +13,8 @@ import (
 )
 
 func main() {
-	// appConfig := app.GetAppConfig()
-	db := app.InitDB()
+	appConfig := config.GetAppConfig()
+	db := database.InitDB()
 	validate := validator.New()
 	router := gin.Default()
 	router.Use(middleware.ErrorHandlerMiddleware())
@@ -42,11 +44,11 @@ func main() {
 	// user
 
 	// routes
-	app.SocialMediaRoutes(router, socialMediaHandler)
-	app.PhotoRoutes(router, photoHandler)
-	app.CommentRoutes(router, commentHandler)
-	app.UserRoutes(router, userHandler)
+	routes.SocialMediaRoutes(router, socialMediaHandler)
+	routes.PhotoRoutes(router, photoHandler)
+	routes.CommentRoutes(router, commentHandler)
+	routes.UserRoutes(router, userHandler)
 	// end of routes
 
-	router.Run(":8080")
+	router.Run(":", appConfig.SERVER_PORT)
 }
