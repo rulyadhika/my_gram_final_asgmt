@@ -1,4 +1,4 @@
-package app
+package database
 
 import (
 	"database/sql"
@@ -6,10 +6,11 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
+	"github.com/rulyadhika/my_gram_final_asgmt/app/config"
 )
 
 func InitDB() *sql.DB {
-	appConfig := GetAppConfig()
+	appConfig := config.GetAppConfig()
 
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", appConfig.DB_HOST, appConfig.DB_PORT, appConfig.DB_USERNAME, appConfig.DB_PASSWORD, appConfig.DB_DATABASE)
 
