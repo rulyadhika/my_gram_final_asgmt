@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -59,8 +60,21 @@ func (u *UserRepositoryImpl) CheckEmailAndUsernameUnique(ctx *gin.Context, db *s
 	return nil
 }
 
-func (u *UserRepositoryImpl) Login(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {
-	panic("not implemented") // TODO: Implement
+func (u *UserRepositoryImpl) GetUserByEmail(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {
+	sqlQuery := `SELECT id, username, password FROM users WHERE email=$1`
+
+	err := db.QueryRowContext(ctx, sqlQuery, user.Email).Scan(&user.Id, &user.Username, &user.Password)
+
+	if err != nil {
+		log.Printf("[GetUserByEmail - Repo] err:%s\n", err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, errs.NewNotFoundError("user not found")
+		}
+
+		return user, errs.NewInternalServerError("something went wrong")
+	}
+
+	return user, nil
 }
 
 func (u *UserRepositoryImpl) Update(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {

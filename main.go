@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	appConfig := app.GetAppConfig()
+	// appConfig := app.GetAppConfig()
 	db := app.InitDB()
 	validate := validator.New()
 	router := gin.Default()
@@ -48,5 +48,5 @@ func main() {
 	app.UserRoutes(router, userHandler)
 	// end of routes
 
-	router.Run(":" + appConfig.SERVER_PORT)
+	router.Run(":8080")
 }

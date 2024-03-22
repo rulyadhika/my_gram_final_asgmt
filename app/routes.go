@@ -38,7 +38,7 @@ func CommentRoutes(r *gin.Engine, handler handler.CommentHandler) {
 func UserRoutes(r *gin.Engine, handler handler.UserHandler) {
 	userRoute := r.Group("/users")
 	{
-		userRoute.POST("/", handler.Register)
+		userRoute.POST("/register", handler.Register)
 		userRoute.POST("/login", handler.Login)
 		userRoute.PUT("/", handler.Update)
 		userRoute.DELETE("/", handler.Delete)

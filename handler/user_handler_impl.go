@@ -47,7 +47,31 @@ func (u *UserHandlerImpl) Register(ctx *gin.Context) {
 }
 
 func (u *UserHandlerImpl) Login(ctx *gin.Context) {
-	panic("not implemented") // TODO: Implement
+	userDto := &dto.LoginRequest{}
+
+	err := ctx.ShouldBindJSON(userDto)
+
+	if err != nil {
+		log.Printf("[LoginUser - Handler] err:%s\n", err.Error())
+		ctx.Error(errs.NewUnprocessableEntityError("invalid json request body"))
+		return
+	}
+
+	result, err := u.UserService.Login(ctx, userDto)
+
+	if err != nil {
+		ctx.Error(err)
+		return
+	}
+
+	response := &dto.WebResponse{
+		Status:  http.StatusText(http.StatusOK),
+		Code:    http.StatusOK,
+		Message: "successfully login",
+		Data:    result,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (u *UserHandlerImpl) Update(ctx *gin.Context) {

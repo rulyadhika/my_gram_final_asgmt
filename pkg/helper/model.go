@@ -167,3 +167,9 @@ func ToNewUserResponse(u entity.User) *dto.NewUserResponse {
 		Age:      u.Age,
 	}
 }
+
+func ToLoginResponse(token string) *dto.LoginResponse {
+	return &dto.LoginResponse{
+		Token: token,
+	}
+}

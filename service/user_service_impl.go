@@ -69,7 +69,44 @@ func (u *UserServiceImpl) Register(ctx *gin.Context, userDto *dto.NewUserRequest
 }
 
 func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*dto.LoginResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := u.Validate.Struct(userDto)
+
+	if validationErr != nil {
+		return &dto.LoginResponse{}, validationErr
+	}
+
+	user := entity.User{
+		Email:    userDto.Email,
+		Password: userDto.Password,
+	}
+
+	// check if email exists
+	result, err := u.UserRepository.GetUserByEmail(ctx, u.DB, user)
+
+	if err != nil {
+		switch err.(type) {
+		case *errs.NotFoundError:
+			return &dto.LoginResponse{}, errs.NewBadRequestError("invalid email/password")
+		default:
+			return &dto.LoginResponse{}, err
+		}
+	}
+
+	// validate password
+	passwordValid := user.ValidatePassword(result.Password)
+
+	if !passwordValid {
+		return &dto.LoginResponse{}, errs.NewBadRequestError("invalid email/password")
+	}
+
+	// generate jwt token
+	token, err := user.GenerateToken("asdasdadsasd")
+
+	if err != nil {
+		return &dto.LoginResponse{}, err
+	}
+
+	return helper.ToLoginResponse(token.(string)), nil
 }
 
 func (u *UserServiceImpl) Update(ctx *gin.Context, userDto *dto.UpdateUserRequest) (*dto.UpdateUserResponse, error) {
