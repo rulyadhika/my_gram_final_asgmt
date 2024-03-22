@@ -110,9 +110,45 @@ func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*d
 }
 
 func (u *UserServiceImpl) Update(ctx *gin.Context, userDto *dto.UpdateUserRequest) (*dto.UpdateUserResponse, error) {
-	panic("not implemented") // TODO: Implement
+	validationErr := u.Validate.Struct(userDto)
+
+	if validationErr != nil {
+		return &dto.UpdateUserResponse{}, validationErr
+	}
+
+	age, err := userDto.Age.Float64()
+
+	if err != nil {
+		return &dto.UpdateUserResponse{}, errs.NewUnprocessableEntityError("age must be a number")
+	}
+
+	user := entity.User{
+		Id:       userDto.Id,
+		Username: userDto.Username,
+		Email:    userDto.Email,
+		Age:      uint(age),
+	}
+
+	err = u.UserRepository.CheckEmailAndUsernameUnique(ctx, u.DB, user)
+	if err != nil {
+		return &dto.UpdateUserResponse{}, err
+	}
+
+	result, err := u.UserRepository.Update(ctx, u.DB, user)
+
+	if err != nil {
+		return &dto.UpdateUserResponse{}, err
+	}
+
+	return helper.ToUpdateUserResponse(result), nil
 }
 
 func (u *UserServiceImpl) Delete(ctx *gin.Context, userId int) error {
-	panic("not implemented") // TODO: Implement
+	err := u.UserRepository.Delete(ctx, u.DB, userId)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
@@ -30,9 +31,21 @@ func (u *UserRepositoryImpl) Register(ctx *gin.Context, db *sql.DB, user entity.
 }
 
 func (u *UserRepositoryImpl) CheckEmailAndUsernameUnique(ctx *gin.Context, db *sql.DB, user entity.User) error {
-	sqlQuery := `SELECT id FROM users WHERE email=$1`
+	var sqlQuery string
+	var rowsEmail, rowsUsername *sql.Rows
+	var err error
 
-	rowsEmail, err := db.QueryContext(ctx, sqlQuery, user.Email)
+	if user.Id == 0 {
+		// this block is used for checking email is unique when on registering a new user
+
+		sqlQuery = `SELECT id FROM users WHERE email=$1`
+		rowsEmail, err = db.QueryContext(ctx, sqlQuery, user.Email)
+	} else {
+		// this block is used for checking email is unique when on updating an existing user
+
+		sqlQuery = `SELECT id FROM users WHERE email=$1 AND NOT id=$2`
+		rowsEmail, err = db.QueryContext(ctx, sqlQuery, user.Email, user.Id)
+	}
 
 	if err != nil {
 		log.Printf("[CheckEmailAndUsernameUnique(email) - Repo] err:%s\n", err.Error())
@@ -44,8 +57,17 @@ func (u *UserRepositoryImpl) CheckEmailAndUsernameUnique(ctx *gin.Context, db *s
 		return errs.NewConflictError("email has already been taken")
 	}
 
-	sqlQuery = `SELECT id FROM users WHERE username=$1`
-	rowsUsername, err := db.QueryContext(ctx, sqlQuery, user.Username)
+	if user.Id == 0 {
+		// this block is used for checking username is unique when on registering a new user
+
+		sqlQuery = `SELECT id FROM users WHERE username=$1`
+		rowsUsername, err = db.QueryContext(ctx, sqlQuery, user.Username)
+	} else {
+		// this block is used for checking username is unique when on updating an existing user
+
+		sqlQuery = `SELECT id FROM users WHERE username=$1 AND NOT id=$2`
+		rowsUsername, err = db.QueryContext(ctx, sqlQuery, user.Username, user.Id)
+	}
 
 	if err != nil {
 		log.Printf("[CheckEmailAndUsernameUnique(username) - Repo] err:%s\n", err.Error())
@@ -78,9 +100,28 @@ func (u *UserRepositoryImpl) GetUserByEmail(ctx *gin.Context, db *sql.DB, user e
 }
 
 func (u *UserRepositoryImpl) Update(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {
-	panic("not implemented") // TODO: Implement
+	sqlQuery := `UPDATE users SET username=$1, email=$2, age=$3, updated_at=$4 WHERE id=$5 RETURNING updated_at`
+
+	err := db.QueryRowContext(ctx, sqlQuery, user.Username, user.Email, user.Age, time.Now(), user.Id).Scan(&user.UpdatedAt)
+
+	if err != nil {
+		log.Printf("[UpdateUser - Repo] err:%s\n", err.Error())
+		return user, errs.NewInternalServerError("something went wrong")
+	}
+
+	return user, nil
 }
 
 func (u *UserRepositoryImpl) Delete(ctx *gin.Context, db *sql.DB, userId int) error {
-	panic("not implemented") // TODO: Implement
+	var affectedRow int
+
+	sqlQuery := `DELETE FROM users WHERE id=$1 RETURNING id`
+	err := db.QueryRowContext(ctx, sqlQuery, userId).Scan(&affectedRow)
+
+	if err != nil {
+		log.Printf("[DeleteUser - Repo] err:%s\n", err.Error())
+		return errs.NewInternalServerError("something went wrong")
+	}
+
+	return nil
 }

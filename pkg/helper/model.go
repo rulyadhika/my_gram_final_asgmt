@@ -173,3 +173,12 @@ func ToLoginResponse(token string) *dto.LoginResponse {
 		Token: token,
 	}
 }
+
+func ToUpdateUserResponse(u entity.User) *dto.UpdateUserResponse {
+	return &dto.UpdateUserResponse{
+		Username:  u.Username,
+		Email:     u.Email,
+		Age:       u.Age,
+		UpdatedAt: u.UpdatedAt,
+	}
+}

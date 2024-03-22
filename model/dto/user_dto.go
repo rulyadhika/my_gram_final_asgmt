@@ -19,10 +19,10 @@ type NewUserResponse struct {
 }
 
 type UpdateUserRequest struct {
-	Id       uint   `json:"id" validate:"required"`
-	Username string `json:"username" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Age      uint   `json:"age" validate:"required"`
+	Id       uint        `json:"id" validate:"required"`
+	Username string      `json:"username" validate:"required"`
+	Email    string      `json:"email" validate:"required,email"`
+	Age      json.Number `json:"age" validate:"required"`
 }
 
 type UpdateUserResponse struct {
