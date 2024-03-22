@@ -8,13 +8,14 @@ import (
 )
 
 type AppConfig struct {
-	DB_DRIVER   string
-	DB_HOST     string
-	DB_PORT     string
-	DB_DATABASE string
-	DB_USERNAME string
-	DB_PASSWORD string
-	SERVER_PORT string
+	DB_DRIVER      string
+	DB_HOST        string
+	DB_PORT        string
+	DB_DATABASE    string
+	DB_USERNAME    string
+	DB_PASSWORD    string
+	SERVER_PORT    string
+	JWT_SECRET_KEY string
 }
 
 func init() {
@@ -26,12 +27,13 @@ func init() {
 
 func GetAppConfig() *AppConfig {
 	return &AppConfig{
-		DB_DRIVER:   os.Getenv("DB_DRIVER"),
-		DB_HOST:     os.Getenv("DB_HOST"),
-		DB_PORT:     os.Getenv("DB_PORT"),
-		DB_DATABASE: os.Getenv("DB_DATABASE"),
-		DB_USERNAME: os.Getenv("DB_USERNAME"),
-		DB_PASSWORD: os.Getenv("DB_PASSWORD"),
-		SERVER_PORT: os.Getenv("SERVER_PORT"),
+		DB_DRIVER:      os.Getenv("DB_DRIVER"),
+		DB_HOST:        os.Getenv("DB_HOST"),
+		DB_PORT:        os.Getenv("DB_PORT"),
+		DB_DATABASE:    os.Getenv("DB_DATABASE"),
+		DB_USERNAME:    os.Getenv("DB_USERNAME"),
+		DB_PASSWORD:    os.Getenv("DB_PASSWORD"),
+		SERVER_PORT:    os.Getenv("SERVER_PORT"),
+		JWT_SECRET_KEY: os.Getenv("JWT_SECRET_KEY"),
 	}
 }

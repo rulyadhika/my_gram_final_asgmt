@@ -59,3 +59,18 @@ func (n *InternalServerError) Error() string {
 }
 
 // internal server err
+
+// conflict err
+type ConflictError struct {
+	msg string
+}
+
+func NewConflictError(err string) error {
+	return &ConflictError{msg: err}
+}
+
+func (n *ConflictError) Error() string {
+	return n.msg
+}
+
+// conflict err

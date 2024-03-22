@@ -1,12 +1,15 @@
 package dto
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type NewUserRequest struct {
-	Username string `json:"username" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min:6"`
-	Age      uint   `json:"age" validate:"required,min:8"`
+	Username string      `json:"username" validate:"required"`
+	Email    string      `json:"email" validate:"required,email"`
+	Password string      `json:"password" validate:"required"`
+	Age      json.Number `json:"age" validate:"required,number"`
 }
 
 type NewUserResponse struct {
@@ -16,10 +19,10 @@ type NewUserResponse struct {
 }
 
 type UpdateUserRequest struct {
-	Id       uint   `json:"id" validate:"required"`
-	Username string `json:"username" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Age      uint   `json:"age" validate:"required"`
+	Id       uint        `json:"id" validate:"required"`
+	Username string      `json:"username" validate:"required"`
+	Email    string      `json:"email" validate:"required,email"`
+	Age      json.Number `json:"age" validate:"required"`
 }
 
 type UpdateUserResponse struct {
@@ -37,7 +40,7 @@ type UserResponse struct {
 
 type LoginRequest struct {
 	Email    string `json:"email" validate:"required,email"`
-	Password uint   `json:"password" validate:"required,min:6"`
+	Password string `json:"password" validate:"required"`
 }
 
 type LoginResponse struct {

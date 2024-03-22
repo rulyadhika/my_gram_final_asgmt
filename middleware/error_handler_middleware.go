@@ -22,6 +22,8 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 				handleError(ctx, http.StatusUnprocessableEntity, err)
 			case *errs.BadRequestError:
 				handleError(ctx, http.StatusBadRequest, err)
+			case *errs.ConflictError:
+				handleError(ctx, http.StatusConflict, err)
 			case validator.ValidationErrors:
 				handleValidationError(ctx, err.Err.(validator.ValidationErrors))
 			case *errs.NotFoundError:

@@ -159,3 +159,26 @@ func ToUpdateCommentResponse(c entity.Comment) *dto.UpdateCommentResponse {
 		UpdatedAt: c.UpdatedAt,
 	}
 }
+
+func ToNewUserResponse(u entity.User) *dto.NewUserResponse {
+	return &dto.NewUserResponse{
+		Username: u.Username,
+		Email:    u.Email,
+		Age:      u.Age,
+	}
+}
+
+func ToLoginResponse(token string) *dto.LoginResponse {
+	return &dto.LoginResponse{
+		Token: token,
+	}
+}
+
+func ToUpdateUserResponse(u entity.User) *dto.UpdateUserResponse {
+	return &dto.UpdateUserResponse{
+		Username:  u.Username,
+		Email:     u.Email,
+		Age:       u.Age,
+		UpdatedAt: u.UpdatedAt,
+	}
+}
