@@ -100,7 +100,7 @@ func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*d
 	}
 
 	// generate jwt token
-	token, err := user.GenerateToken("asdasdadsasd")
+	token, err := user.GenerateToken()
 
 	if err != nil {
 		return &dto.LoginResponse{}, err

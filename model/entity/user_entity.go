@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/rulyadhika/my_gram_final_asgmt/app/config"
 	"github.com/rulyadhika/my_gram_final_asgmt/pkg/errs"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -48,10 +49,10 @@ func (u *User) getJwtClaims() jwt.Claims {
 	}
 }
 
-func (u *User) signToken(payload jwt.Claims, secret string) (any, error) {
+func (u *User) signToken(payload jwt.Claims) (any, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	stringToken, err := token.SignedString([]byte(secret))
+	stringToken, err := token.SignedString([]byte(config.GetAppConfig().JWT_SECRET_KEY))
 
 	if err != nil {
 		log.Printf("[SignToken - UserEntity] err:%s\n", err.Error())
@@ -61,10 +62,10 @@ func (u *User) signToken(payload jwt.Claims, secret string) (any, error) {
 	return stringToken, nil
 }
 
-func (u *User) GenerateToken(secret string) (any, error) {
+func (u *User) GenerateToken() (any, error) {
 	payload := u.getJwtClaims()
 
-	stringToken, err := u.signToken(payload, secret)
+	stringToken, err := u.signToken(payload)
 
 	if err != nil {
 		return nil, err

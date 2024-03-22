@@ -50,5 +50,5 @@ func main() {
 	routes.UserRoutes(router, userHandler)
 	// end of routes
 
-	router.Run(":", appConfig.SERVER_PORT)
+	router.Run(":" + appConfig.SERVER_PORT)
 }
