@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -64,6 +65,7 @@ func (u *User) signToken(payload jwt.Claims) (any, error) {
 
 func (u *User) GenerateToken() (any, error) {
 	payload := u.getJwtClaims()
+	fmt.Println(payload)
 
 	stringToken, err := u.signToken(payload)
 
@@ -72,4 +74,50 @@ func (u *User) GenerateToken() (any, error) {
 	}
 
 	return stringToken, nil
+}
+
+func (u *User) ParseToken(tokenString string) error {
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errs.NewUnauthorizedError("invalid token")
+		}
+
+		return []byte(config.GetAppConfig().JWT_SECRET_KEY), nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return u.BindTokenToUserEntity(token)
+}
+
+func (u *User) BindTokenToUserEntity(jwtToken *jwt.Token) error {
+	var claims jwt.MapClaims
+
+	if mapClaims, ok := jwtToken.Claims.(jwt.MapClaims); !ok {
+		return errs.NewUnauthorizedError("invalid token")
+	} else {
+		claims = mapClaims
+	}
+
+	if id, ok := claims["id"].(float64); !ok {
+		return errs.NewUnauthorizedError("invalid token")
+	} else {
+		u.Id = uint(id)
+	}
+
+	if email, ok := claims["email"].(string); !ok {
+		return errs.NewUnauthorizedError("invalid token")
+	} else {
+		u.Email = email
+	}
+
+	if username, ok := claims["username"].(string); !ok {
+		return errs.NewUnauthorizedError("invalid token")
+	} else {
+		u.Username = username
+	}
+
+	return nil
 }

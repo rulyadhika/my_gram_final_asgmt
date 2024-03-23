@@ -3,11 +3,14 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rulyadhika/my_gram_final_asgmt/handler"
+	"github.com/rulyadhika/my_gram_final_asgmt/middleware"
 )
 
-func PhotoRoutes(r *gin.Engine, handler handler.PhotoHandler) {
+func PhotoRoutes(r *gin.Engine, handler handler.PhotoHandler, authMiddleware middleware.AuthMiddleware) {
 	photoRoute := r.Group("/photos")
 	{
+		photoRoute.Use(authMiddleware.Authentication())
+
 		photoRoute.GET("/", handler.FindAll)
 		photoRoute.POST("/", handler.Create)
 		photoRoute.PUT("/:photoId", handler.Update)
