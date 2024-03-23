@@ -43,11 +43,13 @@ func main() {
 	userHandler := handler.NewUserHandlerImpl(userService)
 	// user
 
+	authMiddleware := middleware.NewAuthMiddlewareImpl(socialMediaRepository, photoRepository, commentRepository, userRepository, db)
+
 	// routes
-	routes.SocialMediaRoutes(router, socialMediaHandler)
-	routes.PhotoRoutes(router, photoHandler)
-	routes.CommentRoutes(router, commentHandler)
-	routes.UserRoutes(router, userHandler)
+	routes.SocialMediaRoutes(router, socialMediaHandler, authMiddleware)
+	routes.PhotoRoutes(router, photoHandler, authMiddleware)
+	routes.CommentRoutes(router, commentHandler, authMiddleware)
+	routes.UserRoutes(router, userHandler, authMiddleware)
 	// end of routes
 
 	router.Run(":" + appConfig.SERVER_PORT)

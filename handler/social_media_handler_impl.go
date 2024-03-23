@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
+	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
 	"github.com/rulyadhika/my_gram_final_asgmt/pkg/errs"
 	"github.com/rulyadhika/my_gram_final_asgmt/service"
 )
@@ -48,8 +49,13 @@ func (s *SocialMediaHandlerImpl) Create(ctx *gin.Context) {
 		return
 	}
 
-	// TODO change to dynamic user id
-	socialMediaDto.UserId = 1
+	user, ok := ctx.MustGet("userData").(entity.User)
+	if !ok {
+		log.Printf("[CreateSocialMedia - handler] err: failed type casting to 'entity.user'\n")
+		ctx.Error(errs.NewInternalServerError("something went wrong"))
+		return
+	}
+	socialMediaDto.UserId = user.Id
 
 	result, err := s.SocialMediaService.Create(ctx, socialMediaDto)
 

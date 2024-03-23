@@ -28,6 +28,8 @@ func ErrorHandlerMiddleware() gin.HandlerFunc {
 				handleValidationError(ctx, err.Err.(validator.ValidationErrors))
 			case *errs.NotFoundError:
 				handleError(ctx, http.StatusNotFound, err)
+			case *errs.ForbiddenError:
+				handleError(ctx, http.StatusForbidden, err)
 			default:
 				handleError(ctx, http.StatusInternalServerError, err)
 			}

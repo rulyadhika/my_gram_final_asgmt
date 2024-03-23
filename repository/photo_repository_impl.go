@@ -45,6 +45,25 @@ func (p *PhotoRepositoryImpl) FindAll(ctx *gin.Context, db *sql.DB) ([]PhotoUser
 	return photosUser, nil
 }
 
+func (p *PhotoRepositoryImpl) FindById(ctx *gin.Context, db *sql.DB, photoId int) (entity.Photo, error) {
+	sqlQuery := `SELECT id, title, caption, photo_url, user_id, created_at, updated_at FROM photos WHERE id=$1`
+
+	photo := entity.Photo{}
+
+	err := db.QueryRowContext(ctx, sqlQuery, photoId).Scan(&photo.Id, &photo.Title, &photo.Caption, &photo.PhotoUrl, &photo.UserId, &photo.CreatedAt, &photo.UpdatedAt)
+
+	if err != nil {
+		log.Printf("[FindPhotoById - Repo] err: %s \n", err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return photo, errs.NewNotFoundError(fmt.Sprintf("social media with id:%v not found", photoId))
+		}
+
+		return photo, errs.NewInternalServerError("something went wrong")
+	}
+
+	return photo, nil
+}
+
 func (p *PhotoRepositoryImpl) Create(ctx *gin.Context, db *sql.DB, photo entity.Photo) (entity.Photo, error) {
 	sqlQuery := `INSERT INTO photos(title, caption, photo_url, user_id) VALUES($1, $2, $3, $4) RETURNING id, created_at`
 

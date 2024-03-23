@@ -48,6 +48,25 @@ func (s *SocialMediaRepositoryImpl) FindAll(ctx *gin.Context, db *sql.DB) ([]Soc
 	return socialMediasUser, nil
 }
 
+func (s *SocialMediaRepositoryImpl) FindById(ctx *gin.Context, db *sql.DB, socialMediaId int) (entity.SocialMedia, error) {
+	sqlQuery := `SELECT id, name, social_media_url, user_id, created_at, updated_at FROM social_medias WHERE id=$1`
+
+	socialMedia := entity.SocialMedia{}
+
+	err := db.QueryRowContext(ctx, sqlQuery, socialMediaId).Scan(&socialMedia.Id, &socialMedia.Name, &socialMedia.SocialMediaUrl, &socialMedia.UserId, &socialMedia.CreatedAt, &socialMedia.UpdatedAt)
+
+	if err != nil {
+		log.Printf("[FindSocialMediaById - Repo] err: %s \n", err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return socialMedia, errs.NewNotFoundError(fmt.Sprintf("social media with id:%v not found", socialMediaId))
+		}
+
+		return socialMedia, errs.NewInternalServerError("something went wrong")
+	}
+
+	return socialMedia, nil
+}
+
 func (s *SocialMediaRepositoryImpl) Create(ctx *gin.Context, db *sql.DB, socialMedia entity.SocialMedia) (entity.SocialMedia, error) {
 	sqlQuery := "INSERT INTO social_medias(name, social_media_url, user_id) VALUES($1, $2, $3) RETURNING id, created_at"
 

@@ -74,3 +74,33 @@ func (n *ConflictError) Error() string {
 }
 
 // conflict err
+
+// unauthorized err
+type UnauthorizedError struct {
+	msg string
+}
+
+func NewUnauthorizedError(err string) error {
+	return &UnauthorizedError{msg: err}
+}
+
+func (n *UnauthorizedError) Error() string {
+	return n.msg
+}
+
+// unauthorized err
+
+// forbidden err
+type ForbiddenError struct {
+	msg string
+}
+
+func NewForbiddenError(err string) error {
+	return &ForbiddenError{msg: err}
+}
+
+func (n *ForbiddenError) Error() string {
+	return n.msg
+}
+
+// forbidden err

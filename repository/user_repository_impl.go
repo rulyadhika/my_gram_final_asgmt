@@ -112,6 +112,25 @@ func (u *UserRepositoryImpl) Update(ctx *gin.Context, db *sql.DB, user entity.Us
 	return user, nil
 }
 
+func (u *UserRepositoryImpl) GetUserById(ctx *gin.Context, db *sql.DB, userId int) (entity.User, error) {
+	sqlQuery := `SELECT id, email, username, password FROM users WHERE id=$1`
+
+	user := entity.User{}
+
+	err := db.QueryRowContext(ctx, sqlQuery, userId).Scan(&user.Id, &user.Email, &user.Username, &user.Password)
+
+	if err != nil {
+		log.Printf("[GetUserById - Repo] err:%s\n", err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return user, errs.NewNotFoundError("user not found")
+		}
+
+		return user, errs.NewInternalServerError("something went wrong")
+	}
+
+	return user, nil
+}
+
 func (u *UserRepositoryImpl) Delete(ctx *gin.Context, db *sql.DB, userId int) error {
 	var affectedRow int
 

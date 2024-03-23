@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
+	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
 	"github.com/rulyadhika/my_gram_final_asgmt/pkg/errs"
 	"github.com/rulyadhika/my_gram_final_asgmt/service"
 )
@@ -85,9 +86,14 @@ func (u *UserHandlerImpl) Update(ctx *gin.Context) {
 		return
 	}
 
-	// TODO userId should be dynamic from context
-	userId := 1
-	userDto.Id = uint(userId)
+	user, ok := ctx.MustGet("userData").(entity.User)
+	if !ok {
+		log.Printf("[UpdateUser - Handler] err: failed type casting to 'entity.user'\n")
+		ctx.Error(errs.NewInternalServerError("something went wrong"))
+		return
+	}
+
+	userDto.Id = user.Id
 
 	result, err := u.UserService.Update(ctx, userDto)
 
@@ -107,8 +113,14 @@ func (u *UserHandlerImpl) Update(ctx *gin.Context) {
 }
 
 func (u *UserHandlerImpl) Delete(ctx *gin.Context) {
-	// TODO userId should be dynamic from context
-	userId := 1
+	user, ok := ctx.MustGet("userData").(entity.User)
+	if !ok {
+		log.Printf("[DeleteUser - handler] err: failed type casting to 'entity.user'\n")
+		ctx.Error(errs.NewInternalServerError("something went wrong"))
+		return
+	}
+
+	userId := user.Id
 
 	err := u.UserService.Delete(ctx, int(userId))
 
