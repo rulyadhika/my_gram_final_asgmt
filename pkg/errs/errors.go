@@ -89,3 +89,18 @@ func (n *UnauthorizedError) Error() string {
 }
 
 // unauthorized err
+
+// forbidden err
+type ForbiddenError struct {
+	msg string
+}
+
+func NewForbiddenError(err string) error {
+	return &ForbiddenError{msg: err}
+}
+
+func (n *ForbiddenError) Error() string {
+	return n.msg
+}
+
+// forbidden err

@@ -13,6 +13,8 @@ func PhotoRoutes(r *gin.Engine, handler handler.PhotoHandler, authMiddleware mid
 
 		photoRoute.GET("/", handler.FindAll)
 		photoRoute.POST("/", handler.Create)
+
+		photoRoute.Use(authMiddleware.AuthorizationPhoto())
 		photoRoute.PUT("/:photoId", handler.Update)
 		photoRoute.DELETE("/:photoId", handler.Delete)
 	}
@@ -25,6 +27,8 @@ func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler, authMi
 
 		socialMediaRoute.GET("/", handler.FindAll)
 		socialMediaRoute.POST("/", handler.Create)
+
+		socialMediaRoute.Use(authMiddleware.AuthorizationSocialMedia())
 		socialMediaRoute.PUT("/:socialMediaId", handler.Update)
 		socialMediaRoute.DELETE("/:socialMediaId", handler.Delete)
 	}
@@ -37,6 +41,8 @@ func CommentRoutes(r *gin.Engine, handler handler.CommentHandler, authMiddleware
 
 		commentRoute.GET("/", handler.FindAll)
 		commentRoute.POST("/", handler.Create)
+
+		commentRoute.Use(authMiddleware.AuthorizationComment())
 		commentRoute.PUT("/:commentId", handler.Update)
 		commentRoute.DELETE("/:commentId", handler.Delete)
 	}

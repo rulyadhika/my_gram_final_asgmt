@@ -52,6 +52,25 @@ func (c *CommentRepositoryImpl) FindAll(ctx *gin.Context, db *sql.DB) ([]Comment
 	return comments, nil
 }
 
+func (c *CommentRepositoryImpl) FindById(ctx *gin.Context, db *sql.DB, commentId int) (entity.Comment, error) {
+	sqlQuery := `SELECT id, user_id, photo_id, message, created_at, updated_at FROM comments WHERE id=$1`
+
+	comment := entity.Comment{}
+
+	err := db.QueryRowContext(ctx, sqlQuery, commentId).Scan(&comment.Id, &comment.UserId, &comment.PhotoId, &comment.Message, &comment.CreatedAt, &comment.UpdatedAt)
+
+	if err != nil {
+		log.Printf("[FindCommentById - Repo] err: %s \n", err.Error())
+		if errors.Is(err, sql.ErrNoRows) {
+			return comment, errs.NewNotFoundError(fmt.Sprintf("social media with id:%v not found", commentId))
+		}
+
+		return comment, errs.NewInternalServerError("something went wrong")
+	}
+
+	return comment, nil
+}
+
 func (c *CommentRepositoryImpl) Create(ctx *gin.Context, db *sql.DB, comment entity.Comment) (entity.Comment, error) {
 	sqlQuery := `INSERT INTO comments(message, photo_id, user_id) VALUES($1, $2, $3) RETURNING id, created_at`
 
