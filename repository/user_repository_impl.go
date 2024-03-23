@@ -82,7 +82,7 @@ func (u *UserRepositoryImpl) CheckEmailAndUsernameUnique(ctx *gin.Context, db *s
 	return nil
 }
 
-func (u *UserRepositoryImpl) GetUserByEmail(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {
+func (u *UserRepositoryImpl) GetUserByEmail(ctx *gin.Context, db *sql.DB, user *entity.User) error {
 	sqlQuery := `SELECT id, username, password FROM users WHERE email=$1`
 
 	err := db.QueryRowContext(ctx, sqlQuery, user.Email).Scan(&user.Id, &user.Username, &user.Password)
@@ -90,13 +90,13 @@ func (u *UserRepositoryImpl) GetUserByEmail(ctx *gin.Context, db *sql.DB, user e
 	if err != nil {
 		log.Printf("[GetUserByEmail - Repo] err:%s\n", err.Error())
 		if errors.Is(err, sql.ErrNoRows) {
-			return user, errs.NewNotFoundError("user not found")
+			return errs.NewNotFoundError("user not found")
 		}
 
-		return user, errs.NewInternalServerError("something went wrong")
+		return errs.NewInternalServerError("something went wrong")
 	}
 
-	return user, nil
+	return nil
 }
 
 func (u *UserRepositoryImpl) Update(ctx *gin.Context, db *sql.DB, user entity.User) (entity.User, error) {
