@@ -18,9 +18,11 @@ func PhotoRoutes(r *gin.Engine, handler handler.PhotoHandler, authMiddleware mid
 	}
 }
 
-func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler) {
+func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler, authMiddleware middleware.AuthMiddleware) {
 	socialMediaRoute := r.Group("/socialmedias")
 	{
+		socialMediaRoute.Use(authMiddleware.Authentication())
+
 		socialMediaRoute.GET("/", handler.FindAll)
 		socialMediaRoute.POST("/", handler.Create)
 		socialMediaRoute.PUT("/:socialMediaId", handler.Update)
@@ -28,9 +30,11 @@ func SocialMediaRoutes(r *gin.Engine, handler handler.SocialMediaHandler) {
 	}
 }
 
-func CommentRoutes(r *gin.Engine, handler handler.CommentHandler) {
+func CommentRoutes(r *gin.Engine, handler handler.CommentHandler, authMiddleware middleware.AuthMiddleware) {
 	commentRoute := r.Group("/comments")
 	{
+		commentRoute.Use(authMiddleware.Authentication())
+
 		commentRoute.GET("/", handler.FindAll)
 		commentRoute.POST("/", handler.Create)
 		commentRoute.PUT("/:commentId", handler.Update)
@@ -38,11 +42,13 @@ func CommentRoutes(r *gin.Engine, handler handler.CommentHandler) {
 	}
 }
 
-func UserRoutes(r *gin.Engine, handler handler.UserHandler) {
+func UserRoutes(r *gin.Engine, handler handler.UserHandler, authMiddleware middleware.AuthMiddleware) {
 	userRoute := r.Group("/users")
 	{
 		userRoute.POST("/register", handler.Register)
 		userRoute.POST("/login", handler.Login)
+
+		userRoute.Use(authMiddleware.Authentication())
 		userRoute.PUT("/", handler.Update)
 		userRoute.DELETE("/", handler.Delete)
 	}

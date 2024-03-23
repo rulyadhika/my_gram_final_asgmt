@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"database/sql"
 	"net/http"
 	"strings"
 
@@ -22,13 +23,17 @@ type AuthMiddlewareImpl struct {
 	SocialMediaRepository repository.SocialMediaRepository
 	PhotoRepository       repository.PhotoRepository
 	CommentRepository     repository.CommentRepository
+	UserRepository        repository.UserRepository
+	DB                    *sql.DB
 }
 
-func NewAuthMiddlewareImpl(sr repository.SocialMediaRepository, pr repository.PhotoRepository, cr repository.CommentRepository) AuthMiddleware {
+func NewAuthMiddlewareImpl(sr repository.SocialMediaRepository, pr repository.PhotoRepository, cr repository.CommentRepository, ur repository.UserRepository, db *sql.DB) AuthMiddleware {
 	return &AuthMiddlewareImpl{
 		SocialMediaRepository: sr,
 		PhotoRepository:       pr,
 		CommentRepository:     cr,
+		UserRepository:        ur,
+		DB:                    db,
 	}
 }
 
@@ -60,10 +65,13 @@ func (a *AuthMiddlewareImpl) Authentication() gin.HandlerFunc {
 			return
 		}
 
-		// TODO
-		// get user by id
-		// if nil handle authorization error
-		// ctx.Set("userData", user)
+		_, err = a.UserRepository.GetUserById(ctx, a.DB, int(user.Id))
+		if err != nil {
+			HandleUnauthorizedError(ctx, err)
+			return
+		}
+
+		ctx.Set("userData", user)
 
 		ctx.Next()
 	}
