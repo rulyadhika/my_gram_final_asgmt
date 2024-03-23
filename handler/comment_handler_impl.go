@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/rulyadhika/my_gram_final_asgmt/model/dto"
+	"github.com/rulyadhika/my_gram_final_asgmt/model/entity"
 	"github.com/rulyadhika/my_gram_final_asgmt/pkg/errs"
 	"github.com/rulyadhika/my_gram_final_asgmt/service"
 )
@@ -48,9 +49,14 @@ func (c *CommentHandlerImpl) Create(ctx *gin.Context) {
 		return
 	}
 
-	// TODO userId should be dynamic from context
-	userId := 2
-	commentDto.UserId = uint(userId)
+	user, ok := ctx.MustGet("userData").(entity.User)
+	if !ok {
+		log.Printf("[CreateComment - handler] err: failed type casting to 'entity.user'\n")
+		ctx.Error(errs.NewInternalServerError("something went wrong"))
+		return
+	}
+
+	commentDto.UserId = uint(user.Id)
 
 	result, err := c.CommentService.Create(ctx, commentDto)
 
