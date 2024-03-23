@@ -75,13 +75,12 @@ func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*d
 		return &dto.LoginResponse{}, validationErr
 	}
 
-	user := entity.User{
-		Email:    userDto.Email,
-		Password: userDto.Password,
+	user := &entity.User{
+		Email: userDto.Email,
 	}
 
 	// check if email exists
-	result, err := u.UserRepository.GetUserByEmail(ctx, u.DB, user)
+	err := u.UserRepository.GetUserByEmail(ctx, u.DB, user)
 
 	if err != nil {
 		switch err.(type) {
@@ -93,7 +92,7 @@ func (u *UserServiceImpl) Login(ctx *gin.Context, userDto *dto.LoginRequest) (*d
 	}
 
 	// validate password
-	passwordValid := user.ValidatePassword(result.Password)
+	passwordValid := user.ValidatePassword(userDto.Password)
 
 	if !passwordValid {
 		return &dto.LoginResponse{}, errs.NewBadRequestError("invalid email/password")
